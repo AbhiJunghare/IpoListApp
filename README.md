@@ -25,3 +25,51 @@ Restore NuGet packages if prompted.
 Set the project as the startup project.
 Click the "Start" button (or press F5) to run the application.
 
+database Objects
+table :
+CREATE TABLE [dbo].[Tbl_IPOs_Details] (
+    [Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    [StockName] NVARCHAR(100) NOT NULL,
+    [ListingPrice] DECIMAL(18, 2) NOT NULL,
+    [ListingDate] DATE NOT NULL,
+    [CreatedDate] DATETIME NULL,
+    [UpdatedDate] DATETIME NULL
+);
+
+store Procedure
+Create Procedure [dbo].[USP_IPO_CRUD_OP]
+(
+@FLAG VARCHAR(20) = NULL,
+@StockName VARCHAR(50) = null,
+@ListingPrice DECIMAL(10, 2) = null,
+@ListingDate date = null,
+@ID INT = NULL
+)
+as
+BEGIN
+IF @FLAG = 'GET'
+SELECT * FROM Tbl_IPOs_Details;
+
+if @FLAG = 'ADD'
+BEGIN
+INSERT INTO Tbl_IPOs_Details (StockName,ListingPrice,ListingDate,CreatedDate)
+VALUES(@StockName,@ListingPrice,@ListingDate,GETDATE())
+END
+
+IF @FLAG = 'EDIT'
+BEGIN
+SELECT * FROM Tbl_IPOs_Details WHERE Id = @ID ;
+END
+
+IF @FLAG = 'UPDATE'
+BEGIN
+update Tbl_IPOs_Details set StockName = @StockName,ListingDate = @ListingDate, ListingPrice = @ListingPrice , updateddate = GETDATE() WHERE Id = @ID ;
+END
+
+
+IF @FLAG = 'DELETE'
+BEGIN
+  DELETE Tbl_IPOs_Details WHERE Id = @ID ;
+END
+END
+
